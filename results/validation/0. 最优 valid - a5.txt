@@ -1,0 +1,26 @@
+
+
+效果最好的参数组合：
+    Gru:
+        1.  alpha = 0.1, lambda = 0.001                     # lambda2
+
+    MvGruCon & MvGruFusion:
+        2.  lambda_ev = 0.0                                 # lambda20
+
+    MvGru2Units:
+        2.  lambda_ev = 0.0,        lambda_ae = 0.001       # lambda202
+
+    MvGru：
+        2.  lambda_ev = 0.0,        lambda_ae = 0.001       # lambda202
+
+    --------------------------------------------------------
+    BPR
+        1.  alpha = 0.1, lambda = 0.0001                    # lambda3
+
+    VBPR
+        2.  lambda_ev = 0.0001                              # lambda33
+
+    --------------------------------------------------------
+    p-Gru
+        1.  alpha = 0.1, lambda = 0.001                     # lambda2
+    

@@ -1,0 +1,90 @@
+
+总参数：
+    # 1. 建立各参数。要调整的地方都在 p 这了，其它函数都给写死。
+    if not p:
+        v = 1                       # 写1就是valid, 写0就是test
+        assert 0 == v or 1 == v     # no other case
+        p = OrderedDict(
+            [
+                ('dataset',             'user_buys.txt'),
+                ('fea_image',           'normalized_features_image/'),
+                ('fea_text',            'normalized_features_text/'),
+                ('mode',                'valid' if 1 == v else 'test'),
+                ('split',               0.8),           # valid: 6/2/2。test: 8/2.
+                ('at_nums',             [5, 10, 15, 20, 30, 50]),
+                ('intervals',           [2, 10, 30]),   # 以次数2为间隔，分为10个区间. 计算auc/recall@30上的. 换为10
+                ('epochs',              30 if 'taobao' in PATH else 50),
+                ('fea_random_zero',     0.0),           # 0.2 / 0.4
+
+                ('latent_size',         [20, 1024, 100]),
+                ('alpha',               0.1),
+                ('lambda',              0.001),         # 要不要self.lt和self.ux/wh/bi用不同的lambda？
+                ('lambda_ev',           0.0),           # 图文降维局矩阵的。就是这个0.0
+                ('lambda_ae',           0.001),         # 重构误差的。
+
+                ('mini_batch',          1),     # 0:one_by_one,     1:mini_batch
+                ('mvgru',               0),     # 0:gru,
+                                                # 1:mv-gru, 2:mv-gru-2units, 3:mv-gru-con, 4:mv-gru-fusion
+
+                ('batch_size_train',    8),     # size大了之后性能下降非常严重
+                ('batch_size_test',     1024),  # user * item 矩阵太大了，分成多次计算。600就挺合适的
+            ])
+
+
+a5 - valid:
+    ('mode', 'valid')
+    ('split', 0.8)
+    Original data ...
+        users, items, trans:    = 185920, 600915, 1563925
+        time_stamp min, max:    = [970185600, 1406073600]
+        time_date  min, max:    = [2000.09.29 08:00:00, 2014.07.23 08:00:00]
+        sparsity:               = 0.999986001653
+        avg. user buy:          = 8.4118169105
+        avg. item bought:       = 2.60257274323
+    Remove duplicates in test set: mode = valid ...
+        users, items, trans:    = 71405, 249918, 518166
+        time_stamp min, max:    = [1343001600, 1406073600]
+        time_date  min, max:    = [2012.07.23 08:00:00, 2014.07.23 08:00:00]
+        avg. user buy:          = 7.25671871718
+        avg. item bought:       = 2.07334405685
+        useful, only left, only right: = 71405 + 59487 + 55028 = 185920
+    Use aliases to represent items ...
+    Devide test items into intervals ...
+        intervals               = [2, 10, 30]
+        test_i_intervals_items  = 127210, [110738, 9673, 3023, 1427, 718, 449, 271, 218, 156, 537]
+        test_i_intervals_trans  = 224394, [127514, 32297, 16326, 10581, 6768, 5147, 3644, 3380, 2732, 16005]
+        test_i_cold_active_items= 127210, [120411, 6799]
+        test_i_cold_active_trans= 224394, [159811, 64583]
+        test item: unique items = 127210
+        test item: bought times = 224394
+
+
+
+t5 - valid
+    ('mode', 'valid')
+    ('split', 0.8)
+    Original data ...
+        users, items, trans:    = 1014774, 460674, 12972805
+        time_stamp min, max:    = [1402675200, 1434297600]
+        time_date  min, max:    = [2014.06.14 00:00:00, 2015.06.15 00:00:00]
+        sparsity:               = 0.999972249497
+        avg. user buy:          = 12.7839351422
+        avg. item bought:       = 28.1604887621
+    Remove duplicates in test set: mode = valid ...
+        users, items, trans:    = 787792, 367986, 7712928
+        time_stamp min, max:    = [1402675200, 1434297600]
+        time_date  min, max:    = [2014.06.14 00:00:00, 2015.06.15 00:00:00]
+        avg. user buy:          = 9.79056400674
+        avg. item bought:       = 20.9598408635
+        useful, only left, only right: = 787792 + 201113 + 25869 = 1014774
+    Use aliases to represent items ...
+    Devide test items into intervals ...
+        intervals               = [2, 10, 30]
+        test_i_intervals_items  = 216870, [97410, 39399, 20698, 12603, 8319, 5871, 4294, 3315, 2729, 22232]
+        test_i_intervals_trans  = 2303623, [132692, 134454, 112353, 93751, 78683, 67324, 57845, 51238, 47682, 1527601]
+        test_i_cold_active_items= 216870, [136809, 80061]
+        test_i_cold_active_trans= 2303623, [267146, 2036477]
+        test item: unique items = 216870
+        test item: bought times = 2303623
+
+
